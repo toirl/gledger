@@ -3,6 +3,8 @@ package ledger
 import "strconv"
 import "strings"
 import "time"
+import "crypto/sha256"
+import "encoding/hex"
 
 const BLOCK_VERSION = "1"
 const GENESIS_PAYLOAD = "20170801 Genesis Block. NY TIMES: In Mosul, Revealing the Last ISIS Stronghold"
@@ -25,11 +27,20 @@ func (block *Block) GenerateAddress(parent Block) {
 	address_source = append(address_source, block.timestamp.String())
 	address_source = append(address_source, parent.Address)
 	// address_source.= address_source.append(address_source, strconv(block.Payload))
-	block.Address = doubleSHA256(strings.Join(address_source, ""))
+	block.Address = doubleSHA256([]byte(strings.Join(address_source, "")))
 }
 
-func doubleSHA256(value string) string {
-	return "Foo"
+//Return a Sha256 Hash of given data
+func hash256(data []byte) []byte {
+	hash := sha256.New()
+	hash.Write(data)
+	return hash.Sum(nil)
+}
+
+//Returns a string representation of doubled-hashed data
+func doubleSHA256(data []byte) string {
+	hash := hash256(hash256(data))
+	return hex.EncodeToString(hash)
 }
 
 func NewBlock(payload string) Block {
@@ -40,6 +51,10 @@ func NewBlock(payload string) Block {
 
 	// The Address of the block is initially empty. It gets generated once
 	// the block is finally added to the blockchain.
+	block.Address = ""
+	// The Index of the block is initially 0. It gets set once
+	// the block is finally added to the blockchain.
+	block.Index = 0
 
 	return block
 }
