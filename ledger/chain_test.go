@@ -1,6 +1,7 @@
 package ledger
 
 import "testing"
+import "fmt"
 import "strconv"
 
 func TestNewChain(t *testing.T) {
@@ -12,12 +13,19 @@ func TestNewChain(t *testing.T) {
 }
 
 func TestBuildChain(t *testing.T) {
+	var want_address string = "Foo"
 	chain := NewChain()
 	for i := 1; i <= 1000; i++ {
 		block := NewBlock(strconv.Itoa(i))
-		chain.add(block)
+		chain.Add(block)
 	}
 	if len(chain.blocks) != 1001 {
-		t.Error("Expected len of chain to be 1001, got '%s'", len(chain.blocks))
+		t.Error(fmt.Errorf("Expected len of chain to be 1001, got %d", len(chain.blocks)))
+	}
+	if chain.last().Address != want_address {
+		t.Error(fmt.Errorf("Expected Version %s, got %s", want_address, chain.last().Address))
+	}
+	if chain.last().Index != 1001 {
+		t.Error(fmt.Errorf("Expected Index %d, got %d", 1001, chain.last().Index))
 	}
 }
