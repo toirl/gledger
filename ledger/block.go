@@ -6,10 +6,32 @@ import "time"
 import "crypto/sha256"
 import "encoding/hex"
 
-const BLOCK_VERSION = "1"
+const BLOCK_VERSION = "0001"
 const GENESIS_PAYLOAD = "20170801 Genesis Block. NY TIMES: In Mosul, Revealing the Last ISIS Stronghold"
 const GENESIS_ADDRESS = "000000"
 
+// BlockHeader consists of three sets of block metadata. First, there is
+// a reference to a previous block hash, which connects this block to the
+// previous block in the blockchain. The second set of metadata, namely the
+// difficulty, timestamp, and nonce, relate to the mining competition. The
+// third piece of metadata is the merkle tree root, a data structure used to
+// efficiently summarize all the transactions in the block.
+type BlockHeader struct {
+	Version    string
+	Parent     string
+	Merkle     string
+	Timestamp  time.Time
+	Difficulty int
+	Nonce      int
+}
+
+// Block is a container data structure that aggregates transactions for
+// inclusion in the public ledger, the blockchain. The block is made of a header,
+// containing metadata, followed by a long list of transactions that make up the
+// bulk of its size. The block header is 80 bytes, whereas the average
+// transaction is at least 250 bytes and the average block contains more than 500
+// transactions. A complete block, with all transactions, is therefore 1,000
+// times larger than the block header.
 type Block struct {
 	Version   string
 	Payload   string
@@ -41,6 +63,17 @@ func hash256(data []byte) []byte {
 func doubleSHA256(data []byte) string {
 	hash := hash256(hash256(data))
 	return hex.EncodeToString(hash)
+}
+
+func NewBlockHeader() BlockHeader {
+	header := BlockHeader{}
+	header.Version = BLOCK_VERSION
+	header.Timestamp = time.Now()
+	header.Parent = ""
+	header.Merkle = ""
+	header.Difficulty = 0
+	header.Nonce = 0
+	return header
 }
 
 func NewBlock(payload string) Block {
