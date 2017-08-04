@@ -7,8 +7,8 @@ import "strconv"
 func TestNewChain(t *testing.T) {
 	chain := NewChain()
 	genesisBlock := chain.last()
-	if genesisBlock.Payload != GENESIS_PAYLOAD {
-		t.Error("Expected '%s' as Payload in GenesisBlock, got '%s'", GENESIS_PAYLOAD, genesisBlock.Payload)
+	if genesisBlock.Header.Version != BLOCK_VERSION {
+		t.Error("Expected Payload '%s', got %s ", BLOCK_VERSION, genesisBlock.Header.Version)
 	}
 }
 
@@ -20,8 +20,5 @@ func TestBuildChain(t *testing.T) {
 	}
 	if len(chain.blocks) != 1001 {
 		t.Error(fmt.Errorf("Expected len of chain to be 1001, got %d", len(chain.blocks)))
-	}
-	if chain.last().Index != 1001 {
-		t.Error(fmt.Errorf("Expected Index %d, got %d", 1001, chain.last().Index))
 	}
 }
