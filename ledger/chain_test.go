@@ -2,7 +2,6 @@ package ledger
 
 import "testing"
 import "fmt"
-import "strconv"
 
 func TestNewChain(t *testing.T) {
 	chain := NewChain()
@@ -13,9 +12,11 @@ func TestNewChain(t *testing.T) {
 }
 
 func TestBuildChain(t *testing.T) {
+	var tx []Transaction
 	chain := NewChain()
 	for i := 1; i <= 1000; i++ {
-		block := NewBlock(strconv.Itoa(i))
+		tx = append(tx, NewTransaction())
+		block := NewBlock(tx)
 		chain.Add(block)
 	}
 	if len(chain.blocks) != 1001 {

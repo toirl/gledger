@@ -11,7 +11,9 @@ func TestGensisBlock(t *testing.T) {
 }
 
 func TestNewBlock(t *testing.T) {
-	block := NewBlock("TX")
+	var tx []Transaction
+	tx = append(tx, NewTransaction())
+	block := NewBlock(tx)
 	if block.Header.Version != BLOCK_VERSION {
 		t.Error(fmt.Errorf("Expected Payload '%s', got %s ", BLOCK_VERSION, block.Header.Version))
 	}

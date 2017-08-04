@@ -53,7 +53,7 @@ type Block struct {
 	Tx        []int
 }
 
-func NewBlock(payload string) Block {
+func NewBlock(tx []Transaction) Block {
 	block := Block{}
 	block.Header = NewBlockHeader()
 	return block
@@ -65,6 +65,8 @@ func NewBlock(payload string) Block {
 // backward in time, you will eventually arrive at the genesis block.
 // Data of this block are statically encoded into the code.
 func GenesisBlock() Block {
-	block := NewBlock(GENESIS_PAYLOAD)
+	var tx []Transaction
+	tx = append(tx, NewTransaction())
+	block := NewBlock(tx)
 	return block
 }
