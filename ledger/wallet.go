@@ -1,5 +1,7 @@
 package ledger
 
+import "os"
+import "encoding/gob"
 import "crypto/rand"
 import "crypto/rsa"
 
@@ -16,6 +18,39 @@ func NewKey() *rsa.PrivateKey {
 // and a public key.
 type Wallet struct {
 	Keys []rsa.PrivateKey
+}
+
+func (wallet *Wallet) Save(path string) error {
+	file, err := os.Create(path)
+	if err == nil {
+		encoder := gob.NewEncoder(file)
+		encoder.Encode(wallet)
+	}
+	file.Close()
+	return err
+}
+
+func (wallet *Wallet) Load(path string) error {
+	file, err := os.Open(path)
+	if err == nil {
+		decoder := gob.NewDecoder(file)
+		err = decoder.Decode(wallet)
+	}
+	file.Close()
+	return err
+}
+
+func GetWallet(path string) Wallet {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		// path to config does not exist
+		wallet := NewWallet()
+		wallet.Save(path)
+		return wallet
+	} else {
+		wallet := new(Wallet)
+		wallet.Load(path)
+		return *wallet
+	}
 }
 
 func NewWallet() Wallet {
